@@ -1,12 +1,14 @@
 import React, { Component } from 'react'
-
+import { Switch, Route } from 'react-router-dom';
 import  SignIn  from './SignIn';
 
 class App extends Component {
   render() {
     return (
       <div>
-        <SignIn />
+        <Switch>
+          <Route path="/" component={SignIn} />
+        </Switch>
       </div>
     )
   }
