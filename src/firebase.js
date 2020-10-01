@@ -1,3 +1,4 @@
+
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -15,7 +16,49 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 
 export const auth = firebase.auth();
+const googeProvider = new firebase.auth.GithubAuthProvider();
 export const signInWithGoogle = () => {
-    const googeProvider = new firebase.auth.GithubAuthProvider();
     auth.signInWithPopup(googeProvider);
 };
+
+export const signOut = () => {
+    auth.signOut();
+  };
+
+export const firestore = firebase.firestore();
+
+export const createOrGetUserProfileDocument = async (user)=> {
+    if(!user) return;
+
+    const userRef = firestore.doc(`user/${user.uid}`);
+    const snapshot = await userRef.get();
+
+    if(!snapshot.exists){
+        const { displayName, email, photoURL } = user;
+        try {
+            const user = {
+                display_name: displayName,
+                email,
+                photo_url: photoURL,
+                created_at: new Date(user)
+            };
+            await userRef.set({
+
+            });
+        } catch(error) {
+            console.log('Error',error);
+        };
+    }
+    return getUserDocument(user.uid);
+};
+
+export const getUserDocument = async (uid) => {
+    if (!uid) return null;
+  
+    try {
+      const userDocument = await firestore.collection('users').doc(uid);
+      return userDocument;
+    } catch (error) {
+      console.error('Error fetching user', error.message);
+    }
+  };

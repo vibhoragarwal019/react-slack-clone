@@ -3,14 +3,14 @@ import ReactDOM from 'react-dom';
 import {BrowserRouter} from 'react-router-dom';
 import './index.css';
 import  App  from './components/App';
-import MainContainer from './components/MainContainer';
-import Sidebar from './components/Sidebar';
-import Slack from './components/Slack';
+import UserProvider from './providers/UserProvider';
 
 ReactDOM.render(
-  <BrowserRouter>
-    <App />
-  </BrowserRouter>,
+  <UserProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </UserProvider>,
   document.getElementById('root')
 );
 
