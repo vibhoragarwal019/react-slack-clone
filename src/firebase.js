@@ -27,32 +27,37 @@ export const signOut = () => {
 
 export const firestore = firebase.firestore();
 
-export const createOrGetUserProfileDocument = async (user)=> {
-    if(!user) return;
-
-    const userRef = firestore.doc(`user/${user.uid}`);
+export const createOrGetUserProfileDocument = async (user, additionalData) => {
+    if (!user) return;
+  
+    // check if a the user doc is there in DB with
+    const userRef = firestore.doc(`users/${user.uid}`);
     const snapshot = await userRef.get();
-
-    if(!snapshot.exists){
-        const { displayName, email, photoURL } = user;
-        try {
-            const user = {
-                display_name: displayName,
-                email,
-                photo_url: photoURL,
-                created_at: new Date(user)
-            };
-            await userRef.set({
-
-            });
-        } catch(error) {
-            console.log('Error',error);
-        };
+  
+    // if no user exists in DB @ path 'userRef' then go and make one
+    if (!snapshot.exists) {
+      const { displayName, email, photoURL } = user;
+  
+      const createdAt = new Date();
+  
+      try {
+        await userRef.set({
+          display_name: displayName || additionalData.displayName,
+          email,
+          photo_url: photoURL
+            ? photoURL
+            : 'https://ca.slack-edge.com/T0188513NTW-U01867WD8GK-ga631e27835b-72',
+          created_at: createdAt,
+          ...additionalData,
+        });
+      } catch (error) {
+        console.error('Error creating user', error.message);
+      }
     }
     return getUserDocument(user.uid);
-};
-
-export const getUserDocument = async (uid) => {
+  };
+  
+  export const getUserDocument = async (uid) => {
     if (!uid) return null;
   
     try {
